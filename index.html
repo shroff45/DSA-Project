@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Algorithm Advisor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
+    <style>
+      /* For Webkit-based browsers (Chrome, Safari) */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9; /* slate-100 */
+      }
+      .dark ::-webkit-scrollbar-track {
+        background: #1e293b; /* slate-800 */
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background-color: #94a3b8; /* slate-400 */
+        border-radius: 10px;
+        border: 2px solid #f1f5f9; /* slate-100 */
+      }
+      .dark ::-webkit-scrollbar-thumb {
+        background-color: #475569; /* slate-600 */
+        border-color: #1e293b; /* slate-800 */
+      }
+      
+      /* CodeMirror Custom Styles */
+      .CodeMirror {
+        height: auto;
+        font-size: 0.875rem; /* 14px */
+        line-height: 1.5;
+        border-radius: 0.5rem;
+        border: 1px solid #cbd5e1; /* slate-300 */
+      }
+      .dark .CodeMirror {
+        border-color: #475569; /* slate-600 */
+      }
+    </style>
+    <script>
+      // Prevents flash of incorrect theme on page load
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark')
+        document.documentElement.style.colorScheme = 'dark';
+      } else {
+        document.documentElement.classList.remove('dark')
+        document.documentElement.style.colorScheme = 'light';
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.28.0",
+    "@jest/globals": "https://aistudiocdn.com/@jest/globals@^30.2.0"
+  }
+}
+</script>
+</head>
+  <body class="bg-gray-50 dark:bg-slate-900">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+    <!-- CodeMirror JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+    <!-- WASM C Compiler -->
+    <script src="https://cdn.jsdelivr.net/npm/tcc-js/dist/tcc.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  </body>
+</html>

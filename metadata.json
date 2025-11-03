@@ -1,0 +1,5 @@
+{
+  "name": "AI Algorithm Advisor",
+  "description": "An intelligent advisor that suggests the best Data Structures and Algorithms (DSA) for your specific problem. Describe your challenge and get expert AI-powered recommendations on algorithms, data structures, complexity analysis, and more.",
+  "requestFramePermissions": []
+}
