@@ -8,7 +8,7 @@ const ChatIcon: React.FC<ChatIconProps> = ({ onClick }) => {
     return (
         <button
             onClick={onClick}
-            className="fixed bottom-6 right-6 z-50 p-4 bg-cyan-600 text-white rounded-full shadow-lg hover:bg-cyan-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-slate-900 focus:ring-cyan-500 transition-all duration-200 transform hover:scale-110"
+            className="fixed bottom-6 right-6 z-50 p-4 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-slate-950 focus:ring-indigo-500 transition-all duration-200 transform hover:scale-110"
             aria-label="Open AI Assistant"
         >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

@@ -24,10 +24,8 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         // This effect syncs the theme state with the DOM and localStorage
         if (theme === 'dark') {
             document.documentElement.classList.add('dark');
-            document.documentElement.style.colorScheme = 'dark';
         } else {
             document.documentElement.classList.remove('dark');
-            document.documentElement.style.colorScheme = 'light';
         }
         localStorage.setItem('theme', theme);
     }, [theme]);

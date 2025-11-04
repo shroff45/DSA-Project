@@ -8,7 +8,11 @@ import QuickExplain from './QuickExplain';
 import GroundedSearch from './GroundedSearch';
 
 // Declare Mermaid on the window object to satisfy TypeScript
-declare var mermaid: any;
+declare global {
+    interface Window {
+        mermaid: any;
+    }
+}
 
 interface AlgorithmCardProps {
     suggestion: AlgorithmSuggestion;
@@ -37,37 +41,40 @@ const AlgorithmCard: React.FC<AlgorithmCardProps> = ({ suggestion, onToggleSave,
     const [quickExplainInitialQuery, setQuickExplainInitialQuery] = useState('');
 
     useEffect(() => {
-        if (typeof mermaid !== 'undefined' && suggestion.mermaidFlowchart) {
+        if (typeof window.mermaid !== 'undefined' && suggestion.mermaidFlowchart) {
              try {
                 const mermaidContainer = document.getElementById(flowchartId);
                 // Check if container exists and is visible before rendering
                 if (mermaidContainer && mermaidContainer.offsetParent !== null) { 
-                    mermaid.initialize({
+                    window.mermaid.initialize({
                         startOnLoad: false,
                         theme: theme === 'dark' ? 'dark' : 'default',
                         flowchart: { useMaxWidth: true }
                     });
-                    mermaid.render(
-                        `${flowchartId}-svg`,
-                        suggestion.mermaidFlowchart,
-                        (svgCode) => {
-                             if (mermaidContainer) {
-                                 mermaidContainer.innerHTML = svgCode;
-                                 // Make flowchart nodes interactive
-                                 const nodes = mermaidContainer.querySelectorAll('.node');
-                                 nodes.forEach(node => {
-                                     (node as HTMLElement).style.cursor = 'pointer';
-                                     node.addEventListener('click', () => {
-                                         const nodeLabel = node.textContent?.trim();
-                                         if (nodeLabel) {
-                                            setQuickExplainInitialQuery(`Explain this step of ${suggestion.algorithmName}: "${nodeLabel}"`);
-                                            setIsQuickExplainOpen(true);
-                                         }
-                                     });
-                                 });
+                    
+                    const preElement = mermaidContainer.querySelector('pre.mermaid');
+                    if (preElement && !preElement.hasAttribute('data-processed')) {
+                         window.mermaid.run({
+                            nodes: [preElement],
+                            suppressErrors: true,
+                        }).then(() => {
+                            // Make flowchart nodes interactive
+                             const svgElement = mermaidContainer.querySelector('svg');
+                             if(svgElement) {
+                                const nodes = svgElement.querySelectorAll('.node');
+                                nodes.forEach(node => {
+                                    (node as HTMLElement).style.cursor = 'pointer';
+                                    node.addEventListener('click', () => {
+                                        const nodeLabel = node.textContent?.trim();
+                                        if (nodeLabel) {
+                                           setQuickExplainInitialQuery(`Explain this step of ${suggestion.algorithmName}: "${nodeLabel}"`);
+                                           setIsQuickExplainOpen(true);
+                                        }
+                                    });
+                                });
                              }
-                        }
-                    );
+                        });
+                    }
                 }
             } catch (e) {
                 console.error("Mermaid rendering error:", e);
@@ -81,12 +88,12 @@ const AlgorithmCard: React.FC<AlgorithmCardProps> = ({ suggestion, onToggleSave,
 
 
     return (
-        <div className="bg-white dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl shadow-lg p-6 w-full mb-6 backdrop-blur-sm transition-all hover:border-cyan-500/50 dark:hover:border-cyan-700/50">
+        <div className="bg-white/60 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg p-6 w-full mb-6 backdrop-blur-lg transition-all hover:border-indigo-400/50 dark:hover:border-indigo-600/50">
             <div className="flex justify-between items-start mb-2">
-                <h3 className="text-2xl font-bold text-cyan-600 dark:text-cyan-400">{suggestion.algorithmName}</h3>
+                <h3 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{suggestion.algorithmName}</h3>
                 <button
                     onClick={() => onToggleSave(suggestion)}
-                    className="p-2 -mr-2 -mt-2 rounded-full text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-800/50 focus:ring-cyan-500 transition-colors"
+                    className="p-2 -mr-2 -mt-2 rounded-full text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900/60 focus:ring-indigo-500 transition-colors"
                     aria-label={isSaved ? 'Unsave algorithm' : 'Save algorithm'}
                 >
                     {isSaved ? (
@@ -124,15 +131,18 @@ const AlgorithmCard: React.FC<AlgorithmCardProps> = ({ suggestion, onToggleSave,
             
             <div className="mb-6">
                 <h4 className="text-md font-semibold text-slate-700 dark:text-slate-200 mb-2">Why this fits your problem:</h4>
-                <p className="text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-900/50 p-3 rounded-md border border-slate-300 dark:border-slate-700">{suggestion.useCase}</p>
+                <p className="text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800/60 p-3 rounded-md border border-slate-300 dark:border-slate-700">{suggestion.useCase}</p>
             </div>
             
             <CollapsibleSection title="Visual Flowchart" isOpen={isQuickExplainOpen} onToggle={setIsQuickExplainOpen}>
                  <div className="p-4 bg-white dark:bg-slate-900/70 rounded-md border border-slate-300 dark:border-slate-700 flex justify-center items-center overflow-x-auto min-h-[100px]">
                     {suggestion.mermaidFlowchart ? (
-                         <div id={flowchartId} className="w-full text-center text-slate-800 dark:text-slate-200">
-                            {/* Mermaid SVG is rendered by useEffect when this becomes visible */}
-                            <p className="text-slate-500 dark:text-slate-400">Click a step in the flowchart to learn more about it.</p>
+                        <div id={flowchartId} className="w-full text-center text-slate-800 dark:text-slate-200">
+                             {/* This pre tag will be processed by the useEffect hook */}
+                             <pre className="mermaid" style={{ all: 'unset' }}>
+                                {suggestion.mermaidFlowchart}
+                             </pre>
+                             <p className="text-slate-500 dark:text-slate-400 mt-2 text-sm">Click a step in the flowchart to learn more about it.</p>
                          </div>
                     ) : (
                         <p className="text-slate-500 dark:text-slate-400">No flowchart available for this algorithm.</p>
@@ -161,7 +171,7 @@ const AlgorithmCard: React.FC<AlgorithmCardProps> = ({ suggestion, onToggleSave,
                     <h4 className="text-md font-semibold text-slate-700 dark:text-slate-200 mb-2">Related Algorithms to Explore</h4>
                     <div className="space-y-2">
                         {suggestion.relatedAlgorithms.map((related, index) => (
-                            <div key={index} className="p-3 bg-slate-100 dark:bg-slate-900/50 rounded-md border border-slate-300 dark:border-slate-700">
+                            <div key={index} className="p-3 bg-slate-100 dark:bg-slate-800/60 rounded-md border border-slate-300 dark:border-slate-700">
                                 <p className="font-semibold text-slate-800 dark:text-slate-200">{related.name}</p>
                                 <p className="text-sm text-slate-600 dark:text-slate-400">{related.reason}</p>
                             </div>

@@ -34,7 +34,7 @@ const ComplexityBar: React.FC<{ label: string; value: string }> = ({ label, valu
         <div className="mb-3 last:mb-0">
             <div className="flex justify-between items-center mb-1 text-sm">
                 <span className="text-slate-600 dark:text-slate-300">{label}</span>
-                <span className="font-mono text-cyan-600 dark:text-cyan-300">{value}</span>
+                <span className="font-mono text-indigo-600 dark:text-indigo-300">{value}</span>
             </div>
             <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5">
                 <div 
@@ -77,7 +77,7 @@ const Legend: React.FC = () => {
 
 const ComplexityChart: React.FC<ComplexityChartProps> = ({ timeComplexity, spaceComplexity }) => {
     return (
-        <div className="bg-slate-100 dark:bg-slate-900/50 p-4 rounded-md border border-slate-300 dark:border-slate-700">
+        <div className="bg-slate-100 dark:bg-slate-800/60 p-4 rounded-md border border-slate-300 dark:border-slate-700">
             <div>
                 <ComplexityBar label="Best Time" value={timeComplexity.best} />
                 <ComplexityBar label="Average Time" value={timeComplexity.average} />

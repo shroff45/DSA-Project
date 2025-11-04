@@ -1,79 +1,132 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Algorithm Advisor</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- CodeMirror CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
-    <style>
-      /* For Webkit-based browsers (Chrome, Safari) */
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Algorithm Advisor</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+  
+  <!-- CodeMirror for Code Editor -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/material-darker.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/dracula.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/monokai.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/clike/clike.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/go/go.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/rust/rust.min.js"></script>
 
-      ::-webkit-scrollbar-track {
-        background: #f1f5f9; /* slate-100 */
-      }
-      .dark ::-webkit-scrollbar-track {
-        background: #1e293b; /* slate-800 */
-      }
+  <!-- Mermaid for Flowcharts -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 
-      ::-webkit-scrollbar-thumb {
-        background-color: #94a3b8; /* slate-400 */
-        border-radius: 10px;
-        border: 2px solid #f1f5f9; /* slate-100 */
-      }
-      .dark ::-webkit-scrollbar-thumb {
-        background-color: #475569; /* slate-600 */
-        border-color: #1e293b; /* slate-800 */
-      }
-      
-      /* CodeMirror Custom Styles */
-      .CodeMirror {
-        height: auto;
-        font-size: 0.875rem; /* 14px */
-        line-height: 1.5;
-        border-radius: 0.5rem;
-        border: 1px solid #cbd5e1; /* slate-300 */
-      }
-      .dark .CodeMirror {
-        border-color: #475569; /* slate-600 */
-      }
-    </style>
-    <script>
-      // Prevents flash of incorrect theme on page load
-      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark')
-        document.documentElement.style.colorScheme = 'dark';
-      } else {
-        document.documentElement.classList.remove('dark')
-        document.documentElement.style.colorScheme = 'light';
-      }
-    </script>
-  <script type="importmap">
-{
-  "imports": {
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.28.0",
-    "@jest/globals": "https://aistudiocdn.com/@jest/globals@^30.2.0"
-  }
-}
-</script>
+  <!-- c-slang for C execution sandbox -->
+  <script src="https://cdn.jsdelivr.net/npm/c-slang@2.0.0/dist/c-slang.min.js"></script>
+
+  <style>
+    /* === Modern Theme & High Contrast === */
+
+    /* Main background and text */
+    body {
+      background-color: #f8fafc; /* slate-50 */
+      color: #0f172a; /* slate-900 */
+    }
+
+    .dark body {
+      background-color: #020617; /* slate-950 */
+      color: #e2e8f0; /* slate-200 */
+      background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0);
+      background-size: 25px 25px;
+    }
+
+    /* Headings */
+    h1, h2, h3, h4, h5 {
+      color: #0f172a; /* slate-900 */
+      font-weight: 700;
+    }
+
+    .dark h1, .dark h2, .dark h3, .dark h4, .dark h5 {
+      color: #f8fafc; /* slate-50 */
+    }
+
+    /* Supporting text */
+    p, span, label {
+      color: #334155; /* slate-700 */
+    }
+
+    .dark p, .dark span, .dark label {
+      color: #94a3b8; /* slate-400 */
+    }
+
+    /* Input / textarea visibility */
+    textarea, input, select {
+      background-color: #ffffff;
+      color: #0f172a; /* slate-900 */
+      border: 1px solid #cbd5e1; /* slate-300 */
+    }
+
+    textarea::placeholder {
+      color: #64748b; /* slate-500 */
+    }
+
+    .dark textarea, .dark input, .dark select {
+      background-color: #0f172a; /* slate-900 */
+      color: #f1f5f9; /* slate-100 */
+      border: 1px solid #334155; /* slate-700 */
+    }
+
+    .dark textarea::placeholder {
+      color: #64748b; /* slate-500 */
+    }
+
+    /* CodeMirror editor */
+    .CodeMirror {
+      height: 400px;
+      font-family: 'Fira Code', monospace;
+      font-size: 14px;
+      background-color: #f8fafc; /* slate-50 */
+      color: #1e293b; /* slate-800 */
+    }
+
+    .dark .CodeMirror {
+      background-color: #020617; /* slate-950 */
+      color: #cbd5e1; /* slate-300 */
+    }
+
+    .CodeMirror-gutters {
+      background-color: #e2e8f0; /* slate-200 */
+      border-right: 1px solid #cbd5e1; /* slate-300 */
+    }
+
+    .dark .CodeMirror-gutters {
+      background-color: #0f172a; /* slate-900 */
+      border-right: 1px solid #334155; /* slate-700 */
+    }
+
+    /* Smooth transitions */
+    body, .CodeMirror, h1, h2, h3, p, textarea {
+      transition: background-color 0.3s, color 0.3s;
+    }
+  </style>
 </head>
-  <body class="bg-gray-50 dark:bg-slate-900">
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
-    <!-- CodeMirror JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
-    <!-- WASM C Compiler -->
-    <script src="https://cdn.jsdelivr.net/npm/tcc-js/dist/tcc.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-  </body>
+
+<body class="h-full font-sans bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-200 transition-colors duration-300">
+  <div id="root" class="h-full"></div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "react/": "https://aistudiocdn.com/react@^19.2.0/",
+      "react": "https://aistudiocdn.com/react@^19.2.0",
+      "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+      "react-dom/client": "https://aistudiocdn.com/react-dom@^19.2.0/client",
+      "@google/genai": "https://aistudiocdn.com/@google/genai@^1.28.0",
+      "@jest/globals": "https://aistudiocdn.com/@jest/globals@^30.2.0"
+    }
+  }
+  </script>
+
+  <script type="module" src="/index.tsx"></script>
+</body>
 </html>

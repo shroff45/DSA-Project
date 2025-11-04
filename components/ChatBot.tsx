@@ -79,13 +79,16 @@ const ChatBot: React.FC<ChatBotProps> = ({ isOpen, onClose }) => {
     }
 
     return (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-modal="true">
-            <div className="bg-slate-100 dark:bg-slate-800 w-full max-w-2xl h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex justify-end" role="dialog" aria-modal="true" onClick={onClose}>
+            <div 
+                className="bg-slate-50 dark:bg-slate-900 w-full max-w-md h-full shadow-2xl flex flex-col overflow-hidden border-l border-slate-200 dark:border-slate-800"
+                onClick={(e) => e.stopPropagation()}
+            >
                 <header className="flex items-center justify-between p-4 border-b border-slate-300 dark:border-slate-700 flex-shrink-0">
                     <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">AI Assistant</h2>
                     <button
                         onClick={onClose}
-                        className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                        className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         aria-label="Close chat"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -101,7 +104,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ isOpen, onClose }) => {
                     <div ref={messagesEndRef} />
                 </main>
 
-                <footer className="p-4 border-t border-slate-300 dark:border-slate-700 flex-shrink-0">
+                <footer className="p-4 border-t border-slate-300 dark:border-slate-700 flex-shrink-0 bg-slate-100 dark:bg-slate-900/50">
                     <div className="flex items-center gap-2">
                         <input
                             type="text"
@@ -109,13 +112,13 @@ const ChatBot: React.FC<ChatBotProps> = ({ isOpen, onClose }) => {
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && !isLoading && handleSend()}
                             placeholder="Ask a question..."
-                            className="flex-grow p-3 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition-shadow"
+                            className="flex-grow p-3 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-shadow"
                             disabled={isLoading}
                         />
                         <button
                             onClick={handleSend}
                             disabled={isLoading || !input.trim()}
-                            className="p-3 bg-cyan-600 text-white rounded-lg hover:bg-cyan-500 disabled:bg-slate-400 dark:disabled:bg-slate-600 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-100 dark:focus:ring-offset-slate-800 focus:ring-cyan-500 transition-colors"
+                            className="p-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 disabled:bg-slate-400 dark:disabled:bg-slate-600 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-100 dark:focus:ring-offset-slate-900 focus:ring-indigo-500 transition-colors"
                              aria-label="Send message"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">

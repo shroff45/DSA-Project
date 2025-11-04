@@ -21,7 +21,7 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message }) => {
                 className={`max-w-prose px-4 py-3 rounded-2xl shadow ${
                     isModel
                         ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 rounded-bl-none'
-                        : 'bg-cyan-600 text-white rounded-br-none'
+                        : 'bg-indigo-600 text-white rounded-br-none'
                 }`}
             >
                 <p 

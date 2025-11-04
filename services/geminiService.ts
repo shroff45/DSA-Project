@@ -63,7 +63,7 @@ const getAlgorithmAdviceSchema = {
           },
           mermaidFlowchart: {
             type: Type.STRING,
-            description: "A Mermaid.js flowchart diagram (using 'graph TD;' for top-down) that visually represents the key steps of the algorithm. Use concise labels for nodes. For example: 'graph TD; A[Start] --> B(Process Data); B --> C{Decision}; C -->|Yes| D[End]; C -->|No| B;'"
+            description: "A Mermaid.js flowchart diagram (using 'graph TD;' for top-down) that visually represents the key steps of the algorithm. Use concise labels for nodes. For a complex example like a thread-safe queue, the diagram might look like: 'graph TD; A[Producer Thread] --> B{Queue Full?}; B -->|Yes| C[Wait]; B -->|No| D[Lock Mutex]; D --> E[Enqueue Item]; E --> F[Signal]; F --> G[Unlock Mutex];'"
           }
         },
         required: ["algorithmName", "dataStructures", "description", "difficulty", "timeComplexity", "spaceComplexity", "useCase", "cCodeSnippet", "relatedAlgorithms", "mermaidFlowchart"]
@@ -80,12 +80,40 @@ export const getAlgorithmAdvice = async (problemDescription: string): Promise<Ad
     }
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-    const systemInstruction = `You are an expert Computer Science professor specializing in Data Structures and Algorithms (DSA) for C programming, specifically for students at VIT Vellore.
-A student will describe a problem, and your task is to provide a detailed, structured analysis recommending the best algorithms and data structures.
-Your response MUST be in JSON format and strictly adhere to the provided schema.
-Generate complete, runnable C code snippets.
-The 'useCase' field is critical: you must explicitly connect your recommendation to the user's specific problem description.
-The 'mermaidFlowchart' must be a valid Mermaid.js 'graph TD' syntax string.`;
+    const systemInstruction = `## Your Role
+You are an expert computer science educator and software architect specializing in Data Structures & Algorithms (DSA). Your task is to provide comprehensive, production-ready algorithmic solutions that integrate multiple techniques to solve complex real-world problems.
+
+## Core Problem Analysis Framework
+When presented with a complex algorithmic problem, you MUST:
+1.  **Complete Requirement Coverage**: Identify ALL stated requirements and address each one explicitly with specific algorithms.
+2.  **Multi-Algorithm Integration**: Show how different algorithms work together as a cohesive system.
+3.  **Complexity Trade-offs**: Analyze time/space complexity for each component and justify choices.
+4.  **Production Readiness**: Consider scalability, edge cases, error handling, and real-world constraints.
+5.  **Code Completeness**: Provide full, runnable C implementations with main() functions and test cases.
+
+## Response Structure & JSON Schema Adherence
+Your response MUST be in JSON format and strictly adhere to the provided schema. You will structure your detailed analysis within the fields of this JSON schema.
+
+-   **'summary' field**: Use this field for your high-level analysis. This should include:
+    -   **Problem Decomposition**: Break down the user's problem into distinct sub-problems.
+    -   **System Architecture**: Provide a high-level architecture showing data flow and how different algorithms connect.
+
+-   **'recommendations' array**: For each key algorithm in your proposed solution, create an object in this array.
+    -   **'algorithmName'**: The name of the algorithm.
+    -   **'description'**: Provide a detailed technical description. You can also include parts of your **Integration & Trade-offs** analysis here, explaining how this specific algorithm fits into the larger system.
+    -   **'useCase'**: This is critical. Explain *specifically* why this algorithm is a good fit for one of the decomposed sub-problems. Also use this field for the **Visual Explanation**, providing a step-by-step walkthrough with a small example.
+    -   **'cCodeSnippet'**: Provide a COMPLETE, COMPILABLE C code snippet for this specific algorithm. For the primary recommendation, this snippet can be part of a larger, complete program that includes a \`main()\` function and test cases.
+    -   **'relatedAlgorithms'**: Discuss **Alternative Approaches** here, detailing their trade-offs.
+    -   **'mermaidFlowchart'**: Provide a valid Mermaid.js 'graph TD' syntax string representing the algorithm's flow.
+    -   Fill in all other fields (\`dataStructures\`, \`difficulty\`, \`timeComplexity\`, \`spaceComplexity\`) as accurately as possible.
+
+## Critical Quality Standards
+-   **Completeness**: Address every single requirement explicitly within the JSON structure.
+-   **Justification**: Explain algorithm choices with complexity analysis.
+-   **Integration**: Show how components connect and communicate within the 'summary' and 'description' fields.
+-   **Practicality**: Discuss production deployment and scalability in the 'description' or 'useCase' fields.
+-   **Runnable Code**: Provide complete, testable implementations in 'cCodeSnippet'.
+-   **Edge Cases**: Ensure your code and explanations handle empty inputs, single elements, and maximum constraints.`;
 
     try {
         const response = await ai.models.generateContent({
@@ -159,6 +187,49 @@ export const getGroundedResponse = async (algorithmName: string): Promise<{ text
             text: response.text,
             sources: sources
         };
+
+    } catch (error) {
+        throw new Error(parseGeminiError(error));
+    }
+};
+
+// --- Code Translation Function ---
+
+export const translateCode = async (code: string, targetLanguage: string): Promise<string> => {
+    if (!process.env.API_KEY) {
+        throw new Error('API_KEY is not set.');
+    }
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
+    const prompt = `Translate the following C code into ${targetLanguage}.
+Your response MUST be ONLY the raw code for the specified language.
+Do not include any explanations, comments about the code, or markdown formatting like \`\`\`${targetLanguage.toLowerCase()}\`\`\`.
+Just return the pure, unadulterated code, ready to be compiled or interpreted.
+
+C Code to Translate:
+\`\`\`c
+${code}
+\`\`\`
+`;
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: {
+                temperature: 0.1,
+            }
+        });
+
+        const text = response.text.trim();
+        // The model might still wrap the code in markdown, so we robustly strip it.
+        const codeBlockRegex = new RegExp("```(?:[a-zA-Z\\+\\#]+)?\\n([\\s\\S]*?)\\n```", "g");
+        const match = codeBlockRegex.exec(text);
+        if (match && match[1]) {
+            return match[1].trim();
+        }
+        // If no markdown, return the trimmed text
+        return text;
 
     } catch (error) {
         throw new Error(parseGeminiError(error));

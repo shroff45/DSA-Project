@@ -32,7 +32,7 @@ const GroundedSearch: React.FC<GroundedSearchProps> = ({ algorithmName }) => {
              <div className="text-center p-4">
                 <button
                     onClick={handleSearch}
-                    className="px-4 py-2 text-sm font-semibold text-white bg-cyan-600 rounded-md hover:bg-cyan-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-100 dark:focus:ring-offset-slate-900/50 focus:ring-cyan-500 transition-colors"
+                    className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-100 dark:focus:ring-offset-slate-800/60 focus:ring-indigo-500 transition-colors"
                 >
                     Search for recent examples
                 </button>
@@ -41,7 +41,7 @@ const GroundedSearch: React.FC<GroundedSearchProps> = ({ algorithmName }) => {
     }
 
     return (
-        <div className="p-4 bg-slate-100 dark:bg-slate-900/50 rounded-md border border-slate-300 dark:border-slate-700">
+        <div className="p-4 bg-slate-100 dark:bg-slate-800/60 rounded-md border border-slate-300 dark:border-slate-700">
             {isLoading && (
                  <div className="text-center p-4 text-slate-500 dark:text-slate-400">
                     Searching the web for the latest info...
@@ -67,7 +67,7 @@ const GroundedSearch: React.FC<GroundedSearchProps> = ({ algorithmName }) => {
                                             href={source.web?.uri} 
                                             target="_blank" 
                                             rel="noopener noreferrer"
-                                            className="text-cyan-600 dark:text-cyan-400 hover:underline"
+                                            className="text-indigo-600 dark:text-indigo-400 hover:underline"
                                         >
                                             {source.web?.title || source.web?.uri}
                                         </a>

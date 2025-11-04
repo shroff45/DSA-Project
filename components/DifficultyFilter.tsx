@@ -11,7 +11,7 @@ const filters: Difficulty[] = ['All', 'Easy', 'Medium', 'Hard'];
 
 const getButtonStyles = (isActive: boolean) => {
     return isActive
-        ? 'bg-cyan-600 text-white border-cyan-600 dark:border-cyan-500'
+        ? 'bg-indigo-600 text-white border-indigo-600 dark:border-indigo-500'
         : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700';
 };
 
@@ -23,7 +23,7 @@ const DifficultyFilter: React.FC<DifficultyFilterProps> = ({ activeFilter, onFil
                     <button
                         key={filter}
                         onClick={() => onFilterChange(filter)}
-                        className={`px-4 py-[0.68rem] text-sm font-semibold border-l border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:z-10 transition-colors ${getButtonStyles(activeFilter === filter)} ${index === 0 ? '!border-l-0' : ''}`}
+                        className={`px-4 py-[0.68rem] text-sm font-semibold border-l border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:z-10 transition-colors ${getButtonStyles(activeFilter === filter)} ${index === 0 ? '!border-l-0' : ''}`}
                     >
                         {filter}
                     </button>
